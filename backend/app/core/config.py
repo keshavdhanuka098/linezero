@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:3000,http://localhost:5173"
     debug: bool = False
     auto_migrate: bool = True
+    # Optional Gemini integration for Digital Twin explanations. Read from the GEMINI_API_KEY environment variable.
+    # Never logged or returned by the API; the twin works fully without it.
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemini-2.0-flash"
+    gemini_timeout_s: float = 20.0
 
     @property
     def cors_origin_list(self) -> list[str]:
