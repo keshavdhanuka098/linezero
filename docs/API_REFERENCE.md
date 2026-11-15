@@ -150,3 +150,76 @@ Common envelope:
                  "summary": {}, "tables": {"name": {"columns": ["a"], "rows": [[1]]}}, "details": {}}}
 ```
 CSV = `section,key,value` rows for meta and summary followed by each table. PDF needs the `reportlab` package (501 `export_unavailable` otherwise) and shows at most 60 rows per table.
+
+---
+## Digital Twin (`/twin`)
+
+Reads real queue state from the database; every projection is simulation (SimPy). **No twin endpoint writes to queues, counters or customers.** Errors use the same envelope as the rest of the API (`404 queue_not_found`, `409 no_active_counters`, `422 validation_error` / `invalid_twin_request`).
+
+Time unit: minutes. Rates: customers per minute. Seeds: `replications` runs use `seed, seed+1, …`; the first run is returned for playback. Example JSON shows **structure**, not measured output.
+
+### `TwinConfig` (request body `configuration`)
+Extends the simulator's `SimulationConfig` (`arrival_rate`, `mean_service_time`, `num_counters`, `duration`, `arrival_distribution`, `service_distribution`, `abandonment_enabled`, `mean_patience`, `counter_speed_factors`, `counter_assignment`, `arrival_profile`, `seed`) with:
+
+| Field | Meaning |
+|---|---|
+| `outages[]` | `{counter, start, end?, kind: "failure"\|"outage"}`; `end` omitted = down until the end. Graceful: the customer in service finishes. |
+| `speed_changes[]` | `{counter?, start, end?, factor}`; `counter` omitted = all counters; `factor` 0.6 = 40% slower |
+| `standby_counters[]` | Counters that start closed (reserve) |
+| `staff_available` | Number of staffed counters; higher-numbered counters start closed |
+| `actions[]` | Scheduled recovery: `{type: "activate_counter"\|"deactivate_counter"\|"boost_speed", at, counter?, factor?, duration?}` |
+| `recovery` | Reactive policy `{enabled, queue_threshold, sustain, check_interval, cooldown, max_activations, boost_factor}` |
+| `initial_queue`, `initial_busy_counters[]` | Start from a given live state |
+| `cost_per_counter_hour` | Cost weight for `resource_cost` (counter-hours open × this) |
+| `sample_interval`, `congestion_queue` | Playback frame spacing; queue length counted as congestion (default `max(5, 2 × counters)`) |
+
+Counter indices are zero-based. Runs are limited to ~8,000 expected customers (422 otherwise).
+
+### `GET /twin/status`
+`{"engine": "simpy", "gemini": {"configured": false, "model": null}, "horizons_min": [5,15,30,60], "max_compare_scenarios": 5, "writes_to_real_queues": false}`. Never returns the key.
+
+### `GET /twin/presets?arrival_rate=1.2&mean_service_time=4&num_counters=5&duration=120`
+List of `{id, name, description, assumptions[], configuration}` for `normal`, `arrival_surge`, `staff_shortage`, `counter_failure`, `slow_service`, `peak_hour`. Sizes are illustrative assumptions.
+
+### `GET /twin/live/{queue_id}`
+```json
+{ "queue": {"id": 1, "name": "…", "status": "active", "is_synthetic": true}, "as_of": "…",
+  "counters": [{"index": 0, "id": 1, "name": "…", "status": "active", "service_rate_per_min": 0.25, "active": true, "busy": true}],
+  "waiting": [{"token": 12, "position": 1, "waiting_seconds": 95.0}], "serving": [{"token": 11, "counter_id": 1, "service_elapsed_seconds": 40.0}],
+  "metrics": {"queue_length": 5, "active_counters": 3, "busy_counters": 3, "idle_counters": 0, "counter_utilization_now": 1.0,
+              "longest_current_wait_min": 4.2, "avg_current_wait_min": 2.1, "arrival_rate_per_min": 0.9, "arrival_rate_source": "…",
+              "service_capacity_per_min": 0.75, "load_ratio": 1.2, "congestion_threshold": 6},
+  "operational_status": "normal | busy | congested | no_capacity",
+  "predicted_wait_now": {"waiting_time_min": 8.0, "method": "statistical_baseline"},
+  "suggested_configuration": {"arrival_rate": 0.9, "mean_service_time": 4.0, "num_counters": 3, "duration": 120, "counter_speed_factors": [1,1,1], "standby_counters": []},
+  "data_provenance": {"queue_and_counters": "…", "arrival_rate": "…"} }
+```
+`predicted_wait_now` is `null` if the prediction engine cannot answer (e.g. no active counters). `arrival_rate_per_min` may be `null` with too little history.
+
+### `GET /twin/forecast/{queue_id}?replications=30&seed=2026&arrival_rate=`
+5/15/30/60-minute forecast from the live state. `arrival_rate` overrides the estimated rate (`arrival_rate_source: "user_override"`). 409 `no_active_counters` if no counter is active.
+```json
+{ "method": "replicated_simpy_from_live_state", "replications": 30,
+  "horizons": [{"horizon_min": 5, "queue_length": {"mean": 0, "p10": 0, "p90": 0}, "waiting_time_min": {…}, "arrivals_since_now": {…},
+                "counter_utilization": {…}, "congestion": {"probability": 0.0, "risk": "low|moderate|high", "threshold_queue": 6, "definition": "…"}}, …],
+  "starting_state": {"queue_length": 5, "active_counters": 3, "busy_counters": 3, "arrival_rate_per_min": 0.9, "arrival_rate_source": "…", "service_capacity_per_min": 0.75, "load_ratio": 1.2},
+  "assumptions": ["…"], "notes": {"arrival_rate_floored": false, "queue_truncated": false},
+  "current_prediction": {"waiting_time_min": 8.0, "method": "…"}, "data_provenance": {"…": "…"} }
+```
+`p10`/`p90` are percentiles across simulation replications, not a validated prediction interval.
+
+### `POST /twin/simulate`
+`{"configuration": TwinConfig, "replications": 5, "seed": 2026}` (replications 1-20). Returns `stats` (per metric `mean, std, ci95, min, max, n`), `summary` (means), per-counter aggregates, `per_replication`, and `playback` for the first seed:
+`frames[]` (`t, queue, in_service, arrivals, served, abandoned, longest_wait, counters[]` with 0 idle, 1 busy, 2 failed, 3 closed), `customers[]` (`[id, arrival, service_start, service_end, counter, abandon_time]`), `events[]` (`counter_failure`, `counter_repaired`, `recovery_trigger`, `recovery_action`), `episodes` (`formation[]`, `bottlenecks[]` with most-loaded counter) and the run's own metrics. Metrics: `avg_waiting_time`, `p95_waiting_time` (includes customers still waiting at the end), `max_queue_length`, `total_served`, `abandoned`, `abandonment_rate`, `avg_utilization_available` (while open), `resource_cost`.
+
+### `POST /twin/compare`
+`{"scenarios": [{"name": "Baseline", "configuration": {…}}, …], "replications": 8, "seed": 2026}`; 2-5 scenarios, first is the baseline, all on the same seeds. Returns `metrics{metric: {values, ci95, delta, pct, best_index, paired[]}}` and `improvements[]` (before/after per metric with `paired {mean_diff, ci95, significant}`).
+
+### `POST /twin/recommend`
+`{"configuration": {…}, "replications": 6, "seed": 2026, "max_extra_cost": null}` (replications 2-20). Returns `diagnosis`, `recommendations[]` (ranked; each has `actions`, `improvement` before/after, `score`, `significant`, `extra_cost`, `assumptions`), `recommended_id` (null if nothing clearly helps), `score_formula`, `simulation_only: true`.
+
+### `POST /twin/recover`
+Same request. Searches reactive recovery policies; returns `chosen` policy, `before_after`, `candidates[]`, and playback payloads `baseline.primary` and `recovered.primary`. `chosen` is `null` (with `notes`) if no policy clearly beats doing nothing.
+
+### `POST /twin/explain`
+`{"kind": "congestion|counter|intervention|scenarios", "configuration": {…} | "scenarios": […], "replications": 6, "seed": 2026, "question": null}`. The server recomputes the facts; the client cannot supply them. Returns `text`, `source` (`gemini` or `deterministic`), `deterministic_text`, `facts`, and `gemini {configured, used, model, rejected_reason, error}`. If Gemini's answer contains a number that is not in `facts`, it is discarded and `rejected_reason` explains.
