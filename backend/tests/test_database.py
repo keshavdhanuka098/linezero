@@ -138,8 +138,12 @@ def test_part2_constraints(db):
         db.commit()
 
 
-def test_migration_head_is_0002(tmp_path):
+def test_migration_head_is_0003_and_chains_from_0002(tmp_path):
+    """LineZero 2.0 added revision 0003 on top of the original 0002; the older revisions must remain untouched."""
     from alembic.script import ScriptDirectory
     from app.core.migrations import alembic_config
 
-    assert ScriptDirectory.from_config(alembic_config(f"sqlite:///{tmp_path / 'x.db'}")).get_current_head() == "0002"
+    script = ScriptDirectory.from_config(alembic_config(f"sqlite:///{tmp_path / 'x.db'}"))
+    assert script.get_current_head() == "0003"
+    assert script.get_revision("0003").down_revision == "0002"
+    assert script.get_revision("0002").down_revision == "0001"

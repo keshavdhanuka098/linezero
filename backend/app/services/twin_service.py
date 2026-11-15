@@ -17,6 +17,7 @@ from app.engines import prediction_engine as pe
 from app.engines import twin_forecast as tf
 from app.models import Queue
 from app.services.bottleneck_service import resolve_as_of
+from app.services.calibration_service import CalibrationService
 from app.services.prediction_service import PredictionService, _num
 from app.services.queue_service import QueueService
 
@@ -116,6 +117,8 @@ class TwinService:
             },
             "operational_status": status_, "predicted_wait_now": predicted,
             "suggested_configuration": suggested,
+            # additive (LineZero 2.0): the active calibration version the twin can be re-based on, if one exists
+            "active_calibration": CalibrationService(self.db).active_parameters(queue_id),
             "data_provenance": {
                 "queue_and_counters": "database (synthetic demo data)" if queue.is_synthetic else "database (real)",
                 "arrival_rate": rate_source, "waiting_times": "computed from entry timestamps in the database",

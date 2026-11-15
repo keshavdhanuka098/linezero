@@ -37,6 +37,8 @@ The **Digital Twin** module (`/app/digital-twin`, tagline *Predict. Simulate. Op
 
 ---
 
+> **LineZero 2.0: Adaptive Intelligence** (*Predict. Understand. Intervene. Learn.*) adds a closed loop on top of the Digital Twin: a twin that calibrates itself from observed data (validated, versioned, reversible), explainable operational risk detection, simulated and costed intervention proposals that **people approve and carry out**, and outcome learning that keeps real, synthetic and operator-reported results apart. LineZero never executes an intervention. Methods, formulas, workflow and limitations: [docs/ADAPTIVE_INTELLIGENCE.md](docs/ADAPTIVE_INTELLIGENCE.md). New API: [docs/API_REFERENCE.md](docs/API_REFERENCE.md#adaptive-intelligence-linezero-20). New pages (server mode): Adaptive Intelligence, Operational Risk Radar, Autonomous Interventions, Outcome Learning.
+
 ## 1. Project overview
 
 LineZero has three layers:
@@ -249,19 +251,21 @@ The Gemini call is covered by tests that use an injected fake generator; **no te
 linezero/
 ├── README.md
 ├── docs/
-│   ├── API_REFERENCE.md          # endpoint reference (includes Digital Twin section)
+│   ├── API_REFERENCE.md          # endpoint reference (Digital Twin and Adaptive Intelligence sections)
+│   ├── ADAPTIVE_INTELLIGENCE.md  # LineZero 2.0 methods, workflow, limitations
 │   └── FRONTEND_INTEGRATION.md
 ├── scripts/                      # start-backend / start-frontend (.sh, .ps1)
 ├── shared/queueing_fixtures.json # M/M/c reference values asserted by both test suites
 ├── backend/
 │   ├── requirements.txt  pytest.ini  alembic.ini  .env.example
-│   ├── alembic/versions/         # 0001_initial_schema, 0002_intelligence_layer
+│   ├── alembic/versions/         # 0001_initial_schema, 0002_intelligence_layer, 0003_adaptive_intelligence
 │   ├── app/
 │   │   ├── main.py
 │   │   ├── api/routes/           # queues, counters, simulation, intelligence, twin
 │   │   ├── core/                 # config, database, errors, migrations, init_db
 │   │   ├── engines/              # simulation, prediction, optimization, bottleneck, analytics, report,
-│   │   │                         # twin_engine, twin_forecast, twin_scenarios, twin_recovery, twin_explain
+│   │   │                         # twin_engine, twin_forecast, twin_scenarios, twin_recovery, twin_explain,
+│   │                         # calibration_engine, drift_detection_engine, risk_engine, intervention_engine, outcome_engine
 │   │   ├── models/               # SQLAlchemy models
 │   │   ├── schemas/              # Pydantic schemas (incl. twin.py)
 │   │   ├── services/             # DB-backed services (incl. twin_service.py, gemini_service.py)
@@ -275,6 +279,7 @@ linezero/
         ├── app/
         │   ├── pages/            # browser-demo pages
         │   ├── server/           # pages that render backend data
+        │   ├── intelligence/     # Adaptive Intelligence, Risk Radar, Interventions, Outcome Learning pages
         │   ├── twin/             # Digital Twin UI (TwinPage, LivePanel, LabPanel, HealPanel,
         │   │                     #   ComparePanel, ExplainPanel, FloorView, ScenarioForm, usePlayback)
         │   └── shell/ ui/ charts/
@@ -388,8 +393,8 @@ curl -s -X POST http://127.0.0.1:8000/api/v1/twin/simulate -H 'Content-Type: app
 ## 18. Database and migrations
 
 - SQLite by default (`backend/data/linezero.db`, git-ignored); the schema is PostgreSQL-compatible via `DATABASE_URL`.
-- Migrations live in `backend/alembic/versions`: `0001_initial_schema` and `0002_intelligence_layer`. They are applied automatically at startup (`AUTO_MIGRATE=true`) or manually with `python -m app.core.init_db`.
-- **The Digital Twin adds no tables and no migration.** It reads existing tables only; simulation results are returned to the client and are not stored. Saved comparison scenarios live in the browser's `localStorage`.
+- Migrations live in `backend/alembic/versions`: `0001_initial_schema`, `0002_intelligence_layer` and `0003_adaptive_intelligence`. They are applied automatically at startup (`AUTO_MIGRATE=true`) or manually with `python -m app.core.init_db`.
+- **0003 (Adaptive Intelligence) adds four tables** (`calibration_records`, `calibration_evaluations`, `risk_events`, `intervention_history`) and alters nothing that exists. **The Digital Twin itself adds no tables.** It reads existing tables only; simulation results are returned to the client and are not stored. Saved comparison scenarios live in the browser's `localStorage`.
 - Synthetic data: `python -m app.seed.generate_demo_data --scenario all --customers 500 --seed 42 --reset` (run from `backend/`). All generated rows carry `is_synthetic = true`.
 
 ## 19. Testing
@@ -397,7 +402,8 @@ curl -s -X POST http://127.0.0.1:8000/api/v1/twin/simulate -H 'Content-Type: app
 ```bash
 # Backend
 cd backend && python -m pytest
-#   new: tests/test_twin_engine.py, test_twin_intelligence.py, test_twin_gemini.py, test_twin_api.py
+#   twin: tests/test_twin_*.py
+#   adaptive: test_calibration_*.py, test_risk_*.py, test_intervention_*.py, test_outcome_*.py, test_operations_api.py
 
 # Frontend unit tests (Vitest) and type-check + production build
 cd frontend && npm test

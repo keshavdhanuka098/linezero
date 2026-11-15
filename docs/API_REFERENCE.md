@@ -223,3 +223,47 @@ Same request. Searches reactive recovery policies; returns `chosen` policy, `bef
 
 ### `POST /twin/explain`
 `{"kind": "congestion|counter|intervention|scenarios", "configuration": {…} | "scenarios": […], "replications": 6, "seed": 2026, "question": null}`. The server recomputes the facts; the client cannot supply them. Returns `text`, `source` (`gemini` or `deterministic`), `deterministic_text`, `facts`, and `gemini {configured, used, model, rejected_reason, error}`. If Gemini's answer contains a number that is not in `facts`, it is discarded and `rejected_reason` explains.
+
+---
+
+## Adaptive intelligence (LineZero 2.0)
+
+All routes are under `/api/v1`. Errors use the common envelope `{"error": {"code", "message", "details"}}`. Every response carries a `provenance` block (`observed_real_data` / `synthetic_demo_data`, a notice for synthetic queues, and a legend of data kinds). Methods and formulas: [ADAPTIVE_INTELLIGENCE.md](ADAPTIVE_INTELLIGENCE.md).
+
+### Calibration (`/calibration/{queue_id}`)
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/status` | Active version, data sufficiency, nominal parameters, drift summary. |
+| POST | `/run` | Fit on the earlier customers, validate on the latest, accept only if validation MAE improves. Body: `validation_fraction`, `min_improvement_pct`, `prior_arrival_minutes`, `prior_service_pseudo_n`, `lookback_minutes`, `dry_run`. Rejected candidates are stored without a version; `dry_run` stores nothing. |
+| GET | `/versions` | All versions, newest first (`include_rejected=true`). |
+| POST | `/rollback` | `{version, reason, operator}`: restores an old version's parameters as a **new** active version. |
+| GET | `/drift` | Arrival-rate, service-time and waiting-time drift between the reference and recent windows. |
+| GET / POST | `/evaluation` | Predicted vs actual waits (`scope=new_data` is out-of-sample; `all` is flagged in-sample). POST stores the snapshot. |
+| GET | `/error-history` | Stored evaluation snapshots. |
+
+### Risk (`/risk`)
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/{queue_id}/assess` | Score the 7 categories now. Stores nothing. Query: `wait_sla_min`, `forecast_replications`, `seed`. |
+| POST | `/{queue_id}/scan` | Assess and store/refresh risk events; events no longer detected are resolved. Body: `persist`, `forecast_replications`, `seed`, `wait_sla_min`. |
+| GET | `/{queue_id}/events` | Stored events (`status=open|resolved|all`). |
+| POST | `/events/{event_id}/resolve` | `{operator, note}`. |
+
+### Interventions (`/interventions`)
+| Method | Path | Purpose |
+|---|---|---|
+| POST | `/{queue_id}/evaluate` | Simulate baseline and candidates (common random numbers), price and rank them. Body: `horizon_min` (10-240), `replications` (3-20), `seed`, `risk_event_id`, `cost_model`, `persist`, `use_calibration`. Always `simulation_only: true`, `executed: false`. 409 `no_active_counters`. |
+| GET | `/{queue_id}/history` | Stored candidates (`status` filter). |
+| GET | `/item/{id}` | One record with baseline, expected result, assumptions and `simulation_meta` (`config_hash`, seeds). |
+| POST | `/item/{id}/approve` · `/reject` | `{operator, note}`. Changes nothing in the queue. 409 `invalid_transition` / `another_candidate_in_force`. |
+| POST | `/item/{id}/applied` | `{operator, note, applied_at}`: the operator confirms they carried it out. Requires prior approval; not in the future. |
+| POST | `/item/{id}/outcome` | `{mode: observe|manual, window_minutes, observed, operator, note}`. `observe` measures before/after windows (409 `outcome_window_not_elapsed` / `outcome_insufficient_data`); `manual` stores operator-reported figures. Returns a `verification` label. |
+| GET | `/{queue_id}/learning` | Expected vs observed statistics, kept apart by verification label, plus advisory recalibration signal. |
+
+### Operations loop (`/operations`)
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/{queue_id}/overview` | Counts for each loop stage. |
+| POST | `/{queue_id}/cycle` | Runs only the automatic stages (recalibrate, scan risks, simulate interventions). Never approves or applies. |
+
+Existing `GET /twin/live/{queue_id}` additionally returns `active_calibration` (additive; nothing else changed).

@@ -1,0 +1,34 @@
+/* Adaptive intelligence sections */
+.iq-bar{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:0 0 12px}
+.iq-sel{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+.iq-sel .sel,.iq-sel .in{min-width:220px}
+.iq-banner{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:12.5px;line-height:1.5;margin-bottom:12px;background:#0a1121}
+.iq-banner.synth{border-color:rgba(245,184,75,.45)}
+.iq-banner.real{border-color:rgba(32,214,197,.35)}
+.iq-legend{display:flex;gap:6px;flex-wrap:wrap}
+.iq-stack{display:grid;gap:14px}
+.iq-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media(max-width:1000px){.iq-two{grid-template-columns:minmax(0,1fr)}}
+.iq-note{margin:6px 0 0;display:flex;gap:6px;align-items:flex-start}
+.iq-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.iq-formula{font-family:var(--font-h);font-size:12px;color:var(--muted)}
+.iq-loop{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.iq-stage{border:1px solid var(--line);border-radius:12px;padding:10px;background:#0a1121;display:grid;gap:2px}
+.iq-stage.att{border-color:rgba(245,184,75,.6)}
+.iq-stage b{font-family:var(--font-h);font-size:20px}.iq-stage span{font-size:12px;color:var(--muted)}
+.iq-radar-list{display:grid;gap:8px}
+.iq-risk{border:1px solid var(--line);border-radius:12px;padding:12px;background:#0a1121;display:grid;gap:6px}
+.iq-risk header{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.iq-risk h4{margin:0;font-family:var(--font-h);font-size:14px}
+.iq-comp{display:flex;gap:6px;flex-wrap:wrap}
+.iq-cand{border:1px solid var(--line);border-radius:12px;padding:12px;background:#0a1121;display:grid;gap:8px}
+.iq-cand.best{border-color:rgba(32,214,197,.55);box-shadow:inset 0 0 0 1px rgba(32,214,197,.2)}
+.iq-cand header{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.iq-cand h4{margin:0;font-family:var(--font-h);font-size:14px}
+.iq-kv{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:12px;margin:0}
+.iq-kv dt{color:var(--muted)}.iq-kv dd{margin:0;font-family:var(--font-h);text-align:right}
+.iq-pre{white-space:pre-wrap;font-size:12.5px;line-height:1.55;margin:0}
+.iq-hist{display:grid;gap:8px}
+.iq-row{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#0a1121;display:grid;gap:8px}
+.iq-row header{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.iq-outcome{border-top:1px dashed var(--line);padding-top:8px;display:grid;gap:6px}

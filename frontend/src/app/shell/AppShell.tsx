@@ -42,7 +42,7 @@ export default function AppShell() {
   }, [])
   const route = ROUTES.find(r => loc.pathname.startsWith('/app/' + r.path))
   useEffect(() => { document.title = `${route?.title ?? 'Application'} · LineZero` }, [route])
-  const groups = ['Operate', 'Analyze', 'Optimize', 'System'] as const
+  const groups = ['Operate', 'Analyze', 'Optimize', 'Intelligence', 'System'] as const
 
   return (
     <div className={cx('app', density === 'compact' && 'compact')}>

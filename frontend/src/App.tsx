@@ -12,6 +12,10 @@ const Simulator = lazy(() => import('./app/pages/Simulator'))
 const Bottlenecks = lazy(() => import('./app/pages/Bottlenecks'))
 const Optimizer = lazy(() => import('./app/pages/Optimizer'))
 const DigitalTwin = lazy(() => import('./app/twin/TwinPage'))
+const Adaptive = lazy(() => import('./app/intelligence/AdaptivePage'))
+const RiskRadar = lazy(() => import('./app/intelligence/RiskRadarPage'))
+const Interventions = lazy(() => import('./app/intelligence/InterventionsPage'))
+const OutcomeLearning = lazy(() => import('./app/intelligence/OutcomePage'))
 const Reports = lazy(() => import('./app/pages/Reports'))
 const Settings = lazy(() => import('./app/pages/Settings'))
 
@@ -28,6 +32,10 @@ export default function App() {
         <Route path="bottlenecks" element={<Bottlenecks />} />
         <Route path="optimizer" element={<Optimizer />} />
         <Route path="digital-twin" element={<DigitalTwin />} />
+        <Route path="adaptive-intelligence" element={<Adaptive />} />
+        <Route path="risk-radar" element={<RiskRadar />} />
+        <Route path="interventions" element={<Interventions />} />
+        <Route path="outcome-learning" element={<OutcomeLearning />} />
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
         <Route path="*" element={<div className="page"><div className="card"><EmptyState icon={Compass} title="Page not found" text="That part of LineZero doesn’t exist." action={<Link className="btn p" to="/app/dashboard">Back to dashboard</Link>} /></div></div>} />
