@@ -21,5 +21,6 @@ The dev and preview servers proxy `/api` and `/health` to `http://127.0.0.1:8000
 - `src/api` HTTP client, response types, connection and source state
 - `src/app/server` pages that render backend data
 - `src/app/pages` browser-demo pages (each page switches between the two)
-- `src/store`, `src/lib` demo engine, queue maths, simulator, optimizer, exporters
+- `src/app/twin` Digital Twin (`/app/digital-twin`): live floor view and forecast, what-if/chaos lab with playback and timeline, self-healing, scenario comparison, explanations. Server mode only: it needs the backend's SimPy engines
+- `src/store`, `src/lib` demo engine, queue maths, simulator, optimizer, exporters; `src/lib/twinPlayback.ts` is the Digital Twin's pure form/config/playback logic (unit-tested)
 - `src/landing` landing page
