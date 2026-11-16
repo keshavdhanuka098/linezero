@@ -15,7 +15,7 @@ export default function ServerDashboard() {
   return (
     <div className="page">
       <PageHeader title="Dashboard" sub="Queue intelligence overview from the LineZero API." demo={false}>
-        {queues.some(q => q.is_synthetic) && <Chip tone="demo">SYNTHETIC DATA PRESENT</Chip>}
+        {queues.some(q => q.is_synthetic) && <Chip tone="demo">Synthetic data present</Chip>}
       </PageHeader>
       {queues.length === 0 ? <NoQueues /> : (<>
         <div className="grid g4 kp">

@@ -30,7 +30,7 @@ export function PageHeader({ title, sub, children, demo = true }: { title: strin
     </div>
   )
 }
-export const DemoBadge = ({ label = 'DEMO DATA' }: { label?: string }) => <span className="chip demo" title="Synthetic demonstration data — not live institutional data">{label}</span>
+export const DemoBadge = ({ label = 'Demo data' }: { label?: string }) => <span className="chip demo" title="Synthetic demonstration data — not live institutional data">{label}</span>
 
 export function Card({ title, sub, right, children, className, hl }: { title?: ReactNode; sub?: ReactNode; right?: ReactNode; children: ReactNode; className?: string; hl?: boolean }) {
   return (

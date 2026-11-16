@@ -52,7 +52,7 @@ export default function ServerReports() {
             <div className="tw"><table className="tbl"><thead><tr><th>#</th><th>Title</th><th>Type</th><th>Created</th><th>Data</th><th /></tr></thead><tbody>
               {list.data?.map(r => (
                 <tr key={r.report_id}><td className="mono">{r.report_id}</td><td>{r.title ?? '—'}</td><td>{TYPES[r.report_type] ?? r.report_type}</td><td>{fmtDate(r.created_at)}</td>
-                  <td>{r.contains_synthetic_data ? <Chip tone="demo">SYNTHETIC</Chip> : <Chip tone="ok">RECORDED</Chip>}</td>
+                  <td>{r.contains_synthetic_data ? <Chip tone="demo">Synthetic</Chip> : <Chip tone="ok">Recorded</Chip>}</td>
                   <td><div className="toolbar" style={{ gap: 4 }}>
                     <button className="btn sm" onClick={() => open(r.report_id)}><Eye size={14} />View</button>
                     {(['csv', 'json', 'pdf'] as const).map(f => <button key={f} className="btn sm g" onClick={() => exp(r.report_id, f)} aria-label={`Export ${f.toUpperCase()}`}><Download size={13} />{f.toUpperCase()}</button>)}

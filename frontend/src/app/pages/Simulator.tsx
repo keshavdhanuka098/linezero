@@ -65,7 +65,7 @@ function SimulatorLocal() {
     g.beginPath(); g.moveTo(entryX, cy); g.lineTo(cX - 10, cy); g.stroke()
     for (let i = 0; i < nC; i++) { const y = top + laneH * (i + 0.5); g.beginPath(); g.moveTo(cX - 10, cy); g.bezierCurveTo(cX - 40, cy, cX - 40, y, cX, y); g.moveTo(cX + 96, y); g.lineTo(exitX, y); g.stroke() }
     g.fillStyle = '#8997AD'; g.font = '11px Inter, sans-serif'; g.textAlign = 'center'
-    g.fillText('ARRIVALS', entryX, h - 8); g.fillText('QUEUE', (qX0 + cX - 40) / 2, h - 8); g.fillText('COUNTERS', cX + 48, h - 8); g.fillText('SERVED', exitX - 4, h - 8)
+    g.fillText('Arrivals', entryX, h - 8); g.fillText('Queue', (qX0 + cX - 40) / 2, h - 8); g.fillText('Counters', cX + 48, h - 8); g.fillText('Served', exitX - 4, h - 8)
     g.fillStyle = '#20D6C5'; g.beginPath(); g.arc(entryX, cy, 6, 0, 7); g.fill()
     for (let i = 0; i < nC; i++) {
       const y = top + laneH * (i + 0.5), c = view?.counters[i], util = sim?.metrics().counterUtil[i] ?? 0
@@ -155,7 +155,7 @@ function SimulatorLocal() {
       </PageHeader>
 
       <div className="grid g12" style={{ alignItems: 'start' }}>
-        <Card title="Parameters" sub={locked ? 'Locked while running — reset to edit' : 'Edit, then start'} right={<DemoBadge label="SIMULATION" />}>
+        <Card title="Parameters" sub={locked ? 'Locked while running — reset to edit' : 'Edit, then start'} right={<DemoBadge label="Simulation" />}>
           <div style={{ display: 'grid', gap: 14 }}>
             {(Object.keys(SPEC) as K[]).map(k => (
               <Field key={k} label={SPEC[k].label} error={errors[k]} hint={SPEC[k].hint} right={<span style={{ display: 'flex', gap: 4, alignItems: 'center' }}><input className={cx('in', errors[k] && 'bad')} style={{ width: 78, height: 28, textAlign: 'right' }} inputMode="decimal" disabled={locked} value={p[k]} aria-label={SPEC[k].label} onChange={e => setP({ ...p, [k]: e.target.value })} />{SPEC[k].unit && <em style={{ fontSize: 11, color: 'var(--muted)' }}>{SPEC[k].unit}</em>}</span>}>
@@ -180,7 +180,7 @@ function SimulatorLocal() {
               <div className="card kpi" key={k}><div className="l">{k}</div><div className="v">{v}</div></div>
             ))}
           </div>
-          <Card title="Queue growth and reduction" sub="People in line over simulated time" right={<DemoBadge label="SIMULATION" />}>
+          <Card title="Queue growth and reduction" sub="People in line over simulated time" right={<DemoBadge label="Simulation" />}>
             {series.length < 2 ? <div className="empty" style={{ padding: 28 }}><p>Start the simulation to plot queue length over time.</p></div> : (<>
               <ChartBox h={230}><ResponsiveContainer><AreaChart data={series} margin={{ left: -18, right: 6, top: 6 }}>
                 <CartesianGrid {...gridProps} /><XAxis dataKey="t" type="number" domain={[0, Number(p.duration)]} {...axisProps} unit="m" /><YAxis {...axisProps} allowDecimals={false} />
@@ -194,7 +194,7 @@ function SimulatorLocal() {
         </div>
       </div>
 
-      <Card title="Run comparison" sub="Re-runs the full scenario with the same seed and arrivals, changing only the number of counters" right={<DemoBadge label="SIMULATION" />}>
+      <Card title="Run comparison" sub="Re-runs the full scenario with the same seed and arrivals, changing only the number of counters" right={<DemoBadge label="Simulation" />}>
         <div className="toolbar" style={{ alignItems: 'flex-end', marginBottom: 12 }}>
           <Field label="Scenario B counters"><input className="in" style={{ width: 110 }} inputMode="numeric" value={bCount} onChange={e => setBCount(e.target.value)} /></Field>
           <button className="btn p" onClick={runCompare} disabled={!valid}><GitCompare size={16} />Run comparison</button>

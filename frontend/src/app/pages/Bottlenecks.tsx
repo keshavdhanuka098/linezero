@@ -129,8 +129,8 @@ function FlowGraph({ findings, selected, onSelect, originId }: { findings: Findi
           </g>)
         })}
         <g><circle cx={aX} cy={midY} r={36} fill="#0d1527" stroke={C.teal} strokeWidth={1.5} /><text x={aX} y={midY - 2} textAnchor="middle" fill="#E9F0FA" fontSize="11" fontFamily="Space Grotesk" fontWeight="600">Incoming</text><text x={aX} y={midY + 12} textAnchor="middle" fill="#8997AD" fontSize="10">demand</text></g>
-        <text x={qX} y={14} textAnchor="middle" fill="#58698a" fontSize="10" letterSpacing="2">QUEUES</text>
-        <text x={cX + 24} y={14} textAnchor="middle" fill="#58698a" fontSize="10" letterSpacing="2">COUNTERS · UTIL · LINE</text>
+        <text x={qX} y={14} textAnchor="middle" fill="#6a7487" fontSize="11">Queues</text>
+        <text x={cX + 24} y={14} textAnchor="middle" fill="#6a7487" fontSize="11">Counters · utilization · line</text>
       </svg>
     </div>
   )

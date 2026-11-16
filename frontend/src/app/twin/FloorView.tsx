@@ -23,7 +23,7 @@ export interface FloorProps {
   title?: string
 }
 
-const STATE_TEXT: Record<CounterView, string> = { idle: 'idle', busy: 'serving', failed: 'FAILED', closed: 'closed' }
+const STATE_TEXT: Record<CounterView, string> = { idle: 'idle', busy: 'serving', failed: 'failed', closed: 'closed' }
 
 /** Animated floor plan: arrivals enter at the door, wait in the lane, and move to a counter when service starts. */
 export default function FloorView({ counters, dots, overflow, waiting, label, transitionMs = 250, title = 'Queue floor view' }: FloorProps) {

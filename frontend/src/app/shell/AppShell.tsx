@@ -35,6 +35,11 @@ export default function AppShell() {
   const alerts = useMemo(() => deriveAlerts(state), [state.queues, state.counters, state.history, state.settings.thresholds])
   const crit = alerts.filter(a => a.severity !== 'info').length
   useEffect(() => { setOpen(false) }, [loc.pathname])
+  useEffect(() => {
+    if (!open) return
+    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('keydown', k); return () => document.removeEventListener('keydown', k)
+  }, [open])
   useEffect(() => { try { localStorage.setItem('lz.sb', collapsed ? '1' : '0') } catch {} }, [collapsed])
   useEffect(() => {
     const k = (e: KeyboardEvent) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setPalette(p => !p) } }
@@ -47,7 +52,7 @@ export default function AppShell() {
   return (
     <div className={cx('app', density === 'compact' && 'compact')}>
       <aside className={cx('sb', collapsed && 'col', open && 'open')} aria-label="Primary">
-        <Link to="/" className="sb-brand" aria-label="LineZero landing page"><Logo /><span>LINEZERO</span></Link>
+        <Link to="/" className="sb-brand" aria-label="LineZero landing page"><Logo /><span>LineZero</span></Link>
         <nav>
           {groups.map(g => (
             <div key={g}>
@@ -62,7 +67,7 @@ export default function AppShell() {
           ))}
         </nav>
         <div className="sb-foot">
-          <div className="sb-demo">{serverOn ? 'Connected to the LineZero API. Seeded data is labelled synthetic.' : 'Demo workspace · synthetic data. No live institutional feed is connected.'}</div>
+          <div className={cx('sb-demo', serverOn && 'live')}><i />{serverOn ? 'Connected to the LineZero API. Seeded data is labelled synthetic.' : 'Demo workspace with synthetic data. No live institutional feed is connected.'}</div>
           <button className="sb-tog hide-m" onClick={() => setCollapsed(c => !c)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
             {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}<span>Collapse</span>
           </button>
@@ -72,16 +77,16 @@ export default function AppShell() {
       <div className="main">
         <header className="top">
           <button className="ibtn mob" onClick={() => setOpen(o => !o)} aria-label="Toggle navigation" aria-expanded={open}><Menu size={18} /></button>
-          <Breadcrumbs title={route?.title} />
+          <Breadcrumbs group={route?.group} title={route?.title} />
           <div className="spacer" />
           <SourcePill />
           <LivePill />
-          <button className="search" onClick={() => setPalette(true)} aria-label="Search (Ctrl K)"><Search size={16} /><span>Search pages, queues, counters…</span><kbd>Ctrl K</kbd></button>
+          <button className="search" onClick={() => setPalette(true)} aria-label="Search (Ctrl K)"><Search size={15} /><span>Search…</span><kbd>Ctrl K</kbd></button>
           <Notifications />
           <Profile onNav={nav} />
         </header>
         <ErrorBoundary resetKey={loc.pathname}>
-          <Suspense fallback={<PageSkeleton />}><div key={loc.pathname} style={{ animation: 'appin .35s ease both' }}><Outlet /></div></Suspense>
+          <Suspense fallback={<RouteFallback />}><div key={loc.pathname} className="page-in"><Outlet /></div></Suspense>
         </ErrorBoundary>
       </div>
       {palette && <CommandPalette onClose={() => setPalette(false)} />}
@@ -90,11 +95,15 @@ export default function AppShell() {
   )
 }
 
-function Breadcrumbs({ title }: { title?: string }) {
+function RouteFallback() {
+  return (<><div className="route-bar" role="progressbar" aria-label="Loading page"><i /></div><PageSkeleton /></>)
+}
+
+function Breadcrumbs({ group, title }: { group?: string; title?: string }) {
   return (
     <nav className="crumbs" aria-label="Breadcrumb">
-      <Link to="/" title="Landing page"><Home size={14} /></Link><ChevronRight size={14} />
-      <Link to="/app/dashboard" className="hide-m">Application</Link><ChevronRight size={14} className="hide-m" />
+      <Link to="/" title="Landing page" aria-label="LineZero home"><Home size={14} /></Link><ChevronRight size={13} />
+      {group && <><span className="hide-m">{group}</span><ChevronRight size={13} className="hide-m" /></>}
       <b aria-current="page">{title ?? 'Not found'}</b>
     </nav>
   )
@@ -103,7 +112,7 @@ function Breadcrumbs({ title }: { title?: string }) {
 function SourcePill() {
   const mode = useServer(s => s.mode), status = useServer(s => s.status), setMode = useServer(s => s.setMode), refresh = useServer(s => s.refresh)
   const server = mode === 'server'
-  const label = server ? (status === 'online' ? 'SERVER API' : status === 'checking' ? 'CONNECTING…' : 'API OFFLINE') : 'BROWSER DEMO'
+  const label = server ? (status === 'online' ? 'Server API' : status === 'checking' ? 'Connecting…' : 'API offline') : 'Browser demo'
   const toggle = async () => {
     if (server) { setMode('browser'); toast('Using browser demo data'); return }
     await refresh()
@@ -121,7 +130,7 @@ function LivePill() {
   const live = useStore(s => s.settings.liveFeed), clock = useStore(s => s.clock), fmt = useStore(s => s.settings.timeFormat), setLive = useStore(s => s.setLive)
   return (
     <button className={cx('live-pill hide-m', !live && 'off')} onClick={() => setLive(!live)} aria-label={live ? 'Pause demo feed' : 'Resume demo feed'} title="Demo simulation feed — synthetic data">
-      <i />{live ? 'DEMO LIVE' : 'DEMO PAUSED'} · {demoTimeLabel(clock, fmt)} {live ? <Pause size={12} /> : <Play size={12} />}
+      <i />{live ? 'Demo live' : 'Demo paused'} · {demoTimeLabel(clock, fmt)} {live ? <Pause size={12} /> : <Play size={12} />}
     </button>
   )
 }
@@ -162,10 +171,10 @@ function Profile({ onNav }: { onNav(p: string): void }) {
   useOutside(ref, close, open)
   return (
     <div ref={ref} style={{ position: 'relative' }}>
-      <button className="ibtn" style={{ border: 0, width: 38 }} aria-label="User menu" aria-expanded={open} onClick={() => setOpen(o => !o)}><span className="avatar">DO</span></button>
+      <button className="ibtn" style={{ width: 34 }} aria-label="User menu" aria-expanded={open} onClick={() => setOpen(o => !o)}><span className="avatar">DO</span></button>
       {open && (
         <div className="pop" role="menu">
-          <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--line)', marginBottom: 4 }}><b className="hd">Demo Operator</b><div style={{ color: 'var(--muted)', fontSize: 12 }}>Local demo profile · no sign-in</div></div>
+          <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--line)', marginBottom: 4 }}><b className="hd" style={{ fontSize: 13 }}>Demo operator</b><div style={{ color: 'var(--muted)', fontSize: 12 }}>Local demo profile · no sign-in</div></div>
           <button className="mi" role="menuitem" onClick={() => { close(); onNav('/app/settings') }}><User size={16} />Profile & preferences</button>
           <button className="mi" role="menuitem" onClick={() => { close(); onNav('/app/settings') }}><Cog size={16} />Settings</button>
           <button className="mi" role="menuitem" onClick={() => { close(); setConfirm(true) }}><RotateCcw size={16} />Reset demo data</button>

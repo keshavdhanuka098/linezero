@@ -84,7 +84,7 @@ function Body({ A, animate, sla }: { A: NonNullable<ReturnType<typeof aggregate>
       <Kpi label="Abandonment" value={t.abandonRate === null ? 'n/a' : pct(t.abandonRate, 1)} sub={t.abandonRate === null ? 'not tracked by selected queues' : 'of tracked arrivals'} />
     </div>
     <div className="grid g2">
-      <Card title="Hourly arrival pattern" sub="Average arrivals per hour of day · peak hours highlighted" right={<DemoBadge label="SYNTHETIC" />}>
+      <Card title="Hourly arrival pattern" sub="Average arrivals per hour of day · peak hours highlighted" right={<DemoBadge label="Synthetic" />}>
         <ChartBox><ResponsiveContainer><BarChart data={A.hourly} margin={{ left: -18, right: 6, top: 6 }}>
           <CartesianGrid {...gridProps} /><XAxis dataKey="label" {...axisProps} /><YAxis {...axisProps} />
           <Tooltip cursor={{ fill: 'rgba(107,101,255,.08)' }} content={<ChartTooltip fmt={v => `${v} / hour`} />} />
@@ -92,7 +92,7 @@ function Body({ A, animate, sla }: { A: NonNullable<ReturnType<typeof aggregate>
         </BarChart></ResponsiveContainer></ChartBox>
         <Legend items={[{ label: 'Normal hour', color: C.violet }, { label: 'Peak (≥ 1.25× average hour)', color: C.warn }]} />
       </Card>
-      <Card title="Daily demand trend" sub="Arrivals per day with 7-day moving average" right={<DemoBadge label="SYNTHETIC" />}>
+      <Card title="Daily demand trend" sub="Arrivals per day with 7-day moving average" right={<DemoBadge label="Synthetic" />}>
         <ChartBox><ResponsiveContainer><ComposedChart data={A.daily} margin={{ left: -10, right: 6, top: 6 }}>
           <CartesianGrid {...gridProps} /><XAxis dataKey="label" {...axisProps} interval="preserveStartEnd" minTickGap={30} /><YAxis {...axisProps} />
           <Tooltip content={<ChartTooltip />} />
@@ -101,7 +101,7 @@ function Body({ A, animate, sla }: { A: NonNullable<ReturnType<typeof aggregate>
         </ComposedChart></ResponsiveContainer></ChartBox>
         <Legend items={[{ label: 'Daily arrivals', color: C.violet }, { label: '7-day moving average', color: C.teal }]} />
       </Card>
-      <Card title="Waiting time distribution" sub="Customers by wait (minutes) — modelled log-normal per hour" right={<DemoBadge label="SYNTHETIC" />}>
+      <Card title="Waiting time distribution" sub="Customers by wait (minutes) — modelled log-normal per hour" right={<DemoBadge label="Synthetic" />}>
         <ChartBox><ResponsiveContainer><BarChart data={A.waitHist} margin={{ left: -10, right: 6, top: 6 }}>
           <CartesianGrid {...gridProps} /><XAxis dataKey="bin" {...axisProps} unit="m" /><YAxis {...axisProps} />
           <Tooltip cursor={{ fill: 'rgba(107,101,255,.08)' }} content={<ChartTooltip fmt={v => `${v.toLocaleString()} customers`} labelFmt={l => `${l} min wait`} />} />
@@ -109,14 +109,14 @@ function Body({ A, animate, sla }: { A: NonNullable<ReturnType<typeof aggregate>
         </BarChart></ResponsiveContainer></ChartBox>
         <Legend items={[{ label: `Within ${sla} min target`, color: C.violet }, { label: 'Beyond target', color: C.warn }]} />
       </Card>
-      <Card title="Service time distribution" sub="Customers by time at the counter (minutes)" right={<DemoBadge label="SYNTHETIC" />}>
+      <Card title="Service time distribution" sub="Customers by time at the counter (minutes)" right={<DemoBadge label="Synthetic" />}>
         <ChartBox><ResponsiveContainer><BarChart data={A.svcHist} margin={{ left: -10, right: 6, top: 6 }}>
           <CartesianGrid {...gridProps} /><XAxis dataKey="bin" {...axisProps} unit="m" /><YAxis {...axisProps} />
           <Tooltip cursor={{ fill: 'rgba(107,101,255,.08)' }} content={<ChartTooltip fmt={v => `${v.toLocaleString()} customers`} labelFmt={l => `${l} min service`} />} />
           <Bar dataKey="customers" name="Customers" fill={C.teal} radius={[4, 4, 0, 0]} isAnimationActive={animate} />
         </BarChart></ResponsiveContainer></ChartBox>
       </Card>
-      <Card title="Counter-wise utilization" sub="Estimated from arrival load share × service time ÷ capacity" right={<DemoBadge label="SYNTHETIC" />}>
+      <Card title="Counter-wise utilization" sub="Estimated from arrival load share × service time ÷ capacity" right={<DemoBadge label="Synthetic" />}>
         <ChartBox h={Math.max(220, A.counterUtil.length * 28)}><ResponsiveContainer><BarChart data={A.counterUtil.map(c => ({ ...c, pct: Math.round(c.util * 100) }))} layout="vertical" margin={{ left: 10, right: 20, top: 6 }}>
           <CartesianGrid {...gridProps} horizontal={false} vertical /><XAxis type="number" domain={[0, 100]} unit="%" {...axisProps} /><YAxis type="category" dataKey="name" width={64} {...axisProps} />
           <Tooltip cursor={{ fill: 'rgba(107,101,255,.08)' }} content={<ChartTooltip fmt={v => `${v}%`} />} />
@@ -124,20 +124,20 @@ function Body({ A, animate, sla }: { A: NonNullable<ReturnType<typeof aggregate>
           <Bar dataKey="pct" name="Utilization" radius={[0, 4, 4, 0]} maxBarSize={16} isAnimationActive={animate}>{A.counterUtil.map((c, i) => <Cell key={i} fill={c.util >= 0.85 ? C.warn : C.violet} />)}</Bar>
         </BarChart></ResponsiveContainer></ChartBox>
       </Card>
-      <Card title="Peak-hour detection" sub="Hours ≥ 1.25× the average hourly arrivals · weekday × hour heatmap" right={<DemoBadge label="SYNTHETIC" />}>
+      <Card title="Peak-hour detection" sub="Hours ≥ 1.25× the average hourly arrivals · weekday × hour heatmap" right={<DemoBadge label="Synthetic" />}>
         <div className="toolbar" style={{ marginBottom: 10 }}>
           {A.peaks.length ? A.peaks.map(p => <Chip key={p.hour} tone="hot">{hourLabel(p.hour)}–{hourLabel(p.hour + 1)} · {p.arrivals}/h</Chip>) : <Chip>No pronounced peak in this selection</Chip>}
         </div>
         <Heatmap A={A} />
       </Card>
-      <Card title="Queue efficiency" sub={`Share of customers who waited ≤ ${sla} min, by queue`} right={<DemoBadge label="SYNTHETIC" />}>
+      <Card title="Queue efficiency" sub={`Share of customers who waited ≤ ${sla} min, by queue`} right={<DemoBadge label="Synthetic" />}>
         <div style={{ display: 'grid', gap: 12 }}>
           {A.perQueue.map(q => (
             <div key={q.id}><div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 4 }}><span>{q.name}</span><span className="mono">{pct(q.efficiency)} · avg wait {fmtMin(q.avgWait)}</span></div><Meter v={q.efficiency} tone={q.efficiency < 0.7 ? 'hot' : q.efficiency < 0.85 ? 'warm' : undefined} /></div>
           ))}
         </div>
       </Card>
-      <Card title="Abandonment rate" sub="Share of arrivals leaving before service, daily · only queues that track it" right={<DemoBadge label="SYNTHETIC" />}>
+      <Card title="Abandonment rate" sub="Share of arrivals leaving before service, daily · only queues that track it" right={<DemoBadge label="Synthetic" />}>
         {A.totals.abandonRate === null ? <EmptyState title="No abandonment data" text="None of the selected queues record abandonment. Select a queue that does to see this chart." /> : (<>
           <ChartBox h={200}><ResponsiveContainer><LineChart data={A.daily.map(d => ({ ...d, rate: d.abandon === null ? null : +(d.abandon * 100).toFixed(2) }))} margin={{ left: -10, right: 6, top: 6 }}>
             <CartesianGrid {...gridProps} /><XAxis dataKey="label" {...axisProps} interval="preserveStartEnd" minTickGap={30} /><YAxis {...axisProps} unit="%" />

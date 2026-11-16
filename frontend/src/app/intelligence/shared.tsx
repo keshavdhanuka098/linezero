@@ -73,8 +73,8 @@ export function KindTag({ kind }: { kind: DataKind }) {
 export function ProvenanceBanner({ p }: { p: Provenance | null | undefined }) {
   if (!p) return null
   return p.is_synthetic
-    ? <div className="iq-banner synth" role="note"><Chip tone="demo">SYNTHETIC DATA</Chip><span>{p.notice}</span></div>
-    : <div className="iq-banner real" role="note"><Chip tone="ok">REAL OBSERVATIONS</Chip><span>Observed figures come from this queue’s database. Anything marked Simulated or Predicted is model output, not a measurement.</span></div>
+    ? <div className="iq-banner synth" role="note"><Chip tone="demo">Synthetic data</Chip><span>{p.notice}</span></div>
+    : <div className="iq-banner real" role="note"><Chip tone="ok">Real observations</Chip><span>Observed figures come from this queue’s database. Anything marked Simulated or Predicted is model output, not a measurement.</span></div>
 }
 
 export function Legend() {

@@ -34,7 +34,7 @@ test.describe('with the backend running', () => {
     page.on('pageerror', e => errors.push(e.message))
     await page.goto('/app/adaptive-intelligence')
     await pickQueue(page, /Insufficient capacity/)
-    await expect(page.getByText('SYNTHETIC DATA')).toBeVisible()
+    await expect(page.getByText('Synthetic data')).toBeVisible()
     await expect(page.getByText('Active model')).toBeVisible()
     await page.getByRole('button', { name: /Preview \(saves nothing\)/ }).click()
     await expect(page.getByRole('status').getByText('preview only')).toBeVisible()
@@ -54,7 +54,7 @@ test.describe('with the backend running', () => {
   test('interventions: simulate, approve, confirm applied; then record a reported outcome', async ({ page }) => {
     await page.goto('/app/interventions')
     await pickQueue(page, /Insufficient capacity/)
-    await expect(page.getByText('SIMULATION ONLY')).toBeVisible()
+    await expect(page.getByText('Simulation only')).toBeVisible()
     await page.getByRole('button', { name: 'Simulate interventions' }).click()
     await expect(page.getByTestId('explanation')).toBeVisible()
     const card = page.getByRole('article').filter({ hasText: 'recommended' }).first()
