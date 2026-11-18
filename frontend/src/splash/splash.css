@@ -25,7 +25,12 @@
 @keyframes lzsFade{to{opacity:1}}
 
 .lzs-core{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;max-width:100%}
-.lzs-mark{width:clamp(72px,14vw,104px);height:auto;overflow:visible;margin-bottom:clamp(22px,4vh,36px);filter:drop-shadow(0 0 22px rgba(107,101,255,.35))}
+.lzs-logo{position:relative;width:clamp(112px,21vw,152px);aspect-ratio:1;display:grid;place-items:center;margin-bottom:clamp(20px,4vh,34px)}
+.lzs-ring{position:absolute;inset:0;width:100%;height:100%;overflow:visible;opacity:0;animation:lzsFade .8s .2s ease forwards}
+.lzs-orbit{transform-origin:50px 50px;animation:lzsSpin 24s linear infinite}
+.lzs-arc{filter:drop-shadow(0 0 3px rgba(217,192,140,.7))}
+@keyframes lzsSpin{to{transform:rotate(360deg)}}
+.lzs-mark{position:relative;width:54%;height:auto;overflow:visible;filter:drop-shadow(0 0 22px rgba(107,101,255,.4))}
 .lzs-p{stroke-dasharray:1;stroke-dashoffset:1;animation:lzsDraw .9s cubic-bezier(.5,0,.2,1) forwards}
 .lzs-p:nth-child(2){animation-delay:.12s}.lzs-p:nth-child(3){animation-delay:.24s}
 .lzs-e{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.6);animation:lzsPop .7s .55s cubic-bezier(.2,.9,.3,1.2) forwards}
@@ -47,19 +52,28 @@
 @keyframes lzsRule{to{width:min(260px,60vw)}}
 .lzs-tag{margin:0;font-size:clamp(10px,1.5vw,12px);font-weight:400;letter-spacing:.42em;padding-left:.42em;text-transform:uppercase;color:#A9B4C6;opacity:0;animation:lzsFade .9s 1.9s ease forwards}
 
-.lzs-foot{position:absolute;z-index:2;left:50%;bottom:clamp(40px,9vh,84px);transform:translateX(-50%);width:min(320px,76vw);display:grid;grid-template-columns:1fr auto;column-gap:16px;row-gap:12px;align-items:end}
-.lzs-stage{grid-column:1;min-height:14px;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);white-space:nowrap;overflow:hidden}
-.lzs-stage span{display:block;animation:lzsStage .5s ease both}
-@keyframes lzsStage{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.lzs-pct{grid-column:2;grid-row:1;font-family:var(--font-h,"Space Grotesk",sans-serif);font-size:11px;letter-spacing:.2em;color:#A9B4C6;font-variant-numeric:tabular-nums;min-width:3.2ch;text-align:right}
-.lzs-track{grid-column:1 / -1;grid-row:2;height:1px;background:rgba(217,192,140,.18);position:relative;overflow:hidden}
+.lzs-foot{position:absolute;z-index:2;left:50%;bottom:clamp(36px,8vh,76px);transform:translateX(-50%);width:min(340px,78vw);display:flex;flex-direction:column;align-items:center;gap:14px}
+.lzs-num{display:flex;align-items:baseline;gap:4px;font-family:var(--font-h,"Space Grotesk",sans-serif);font-weight:300;color:var(--gold2);font-variant-numeric:tabular-nums}
+.lzs-num b{font-weight:300;font-size:clamp(34px,7vw,46px);line-height:1;letter-spacing:.06em;text-shadow:0 0 22px rgba(217,192,140,.3)}
+.lzs-num small{font-size:13px;letter-spacing:.1em;color:#A9B4C6}
+.lzs-track{align-self:stretch;height:1px;background:rgba(217,192,140,.18);position:relative;overflow:hidden}
 .lzs-track i{position:absolute;inset:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transform-origin:left;transform:scaleX(0);box-shadow:0 0 10px rgba(217,192,140,.6)}
+.lzs-stage{min-height:14px;font-size:10px;letter-spacing:.3em;padding-left:.3em;text-transform:uppercase;color:var(--gold);white-space:nowrap;text-align:center}
+.lzs-stage span{display:block;animation:lzsStage .5s ease both}
+.lzs-stage.ready{color:#fff;text-shadow:0 0 16px rgba(217,192,140,.7)}
+@keyframes lzsStage{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* floating gold dust */
+.lzs-dust{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lzs-dust i{position:absolute;bottom:-12px;left:var(--x);width:var(--s);height:var(--s);border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(217,192,140,.8);opacity:0;animation:lzsDust var(--t) var(--dl) linear infinite}
+@keyframes lzsDust{0%{opacity:0;transform:translateY(0)}15%{opacity:.7}100%{opacity:0;transform:translateY(-105vh)}}
 
 /* hold the app/landing entrance animations until the splash lifts */
 html.lz-splash-on .app{animation-play-state:paused}
 
 @media(max-width:480px){.lzs-word{letter-spacing:.26em;padding-left:.26em}.lzs-tag{letter-spacing:.3em;padding-left:.3em}}
 @media(prefers-reduced-motion:reduce){
-  .lzs,.lzs-glow,.lzs-c,.lzs-p,.lzs-e,.lzs-word span,.lzs-rule,.lzs-tag,.lzs-stage span{animation-duration:.01s!important;animation-delay:0s!important}
-  .lzs-glow{animation:none}.lzs-rule{width:min(260px,60vw)}.lzs-track i{transition:none}
+  .lzs-glow,.lzs-orbit,.lzs-dust i{animation:none}.lzs-dust{display:none}
+  .lzs-word span{transform:none;filter:none}.lzs-e{transform:none}.lzs-stage span{animation-name:lzsFade}
+  .lzs.out{transform:none}
 }
