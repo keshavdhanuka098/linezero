@@ -191,7 +191,7 @@ def test_migration_0003_adds_only_new_tables_and_round_trips(tmp_path):
     con.commit()
     before = {r[0] for r in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     con.close()
-    command.upgrade(cfg, "head")
+    command.upgrade(cfg, "0003")
     con = sqlite3.connect(tmp_path / "m.db")
     after = {r[0] for r in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     assert after - before == {"calibration_records", "calibration_evaluations", "risk_events", "intervention_history"}
@@ -202,4 +202,4 @@ def test_migration_0003_adds_only_new_tables_and_round_trips(tmp_path):
     assert {r[0] for r in con.execute("SELECT name FROM sqlite_master WHERE type='table'")} == before
     assert con.execute("SELECT name FROM queues").fetchall() == [("keep",)]
     con.close()
-    command.upgrade(cfg, "head")
+    command.upgrade(cfg, "0003")

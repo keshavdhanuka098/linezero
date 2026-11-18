@@ -1,12 +1,12 @@
 /** Response shapes of the adaptive-intelligence endpoints (calibration, risk, interventions, operations). */
-export type DataKind = 'observed' | 'synthetic' | 'simulated' | 'predicted' | 'explanation'
+export type DataKind = 'observed' | 'synthetic' | 'simulated' | 'predicted' | 'explanation' | 'configured'
 export type Severity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
 
 export interface Provenance {
   observations: 'observed_real_data' | 'synthetic_demo_data'
   is_synthetic: boolean
   notice: string | null
-  legend: Record<DataKind, string>
+  legend: Partial<Record<DataKind, string>>
   explanations: string
 }
 

@@ -66,7 +66,7 @@ function ReportsLocal() {
                 <td><Chip tone="vio">{TYPES[r.type]}</Chip></td>
                 <td style={{ whiteSpace: 'nowrap', color: 'var(--muted)' }}>{fmtDate(r.createdAt)}</td>
                 <td><select className="sel" style={{ width: 116, height: 30, fontSize: 12 }} aria-label={`Status of ${r.title}`} value={r.status} onChange={e => { s.updateReport(r.id, { status: e.target.value as ReportStatus }); toast('Status updated') }}><option>Completed</option><option>Reviewed</option><option>Archived</option></select><span style={{ display: 'none' }}>{STATUS_TONE[r.status]}</span></td>
-                <td>{r.synthetic ? <DemoBadge label="Synthetic" /> : <Chip tone="ok">Live</Chip>}</td>
+                <td>{r.synthetic ? <DemoBadge label="SYNTHETIC" /> : <Chip tone="ok">Live</Chip>}</td>
                 <td><div style={{ display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
                   <button className="btn sm g ic" title="View" aria-label={`View ${r.title}`} onClick={() => setView(r)}><Eye size={15} /></button>
                   <button className="btn sm g ic" title="Export CSV" aria-label={`Export ${r.title} as CSV`} onClick={() => csv(r)}><FileDown size={15} /></button>

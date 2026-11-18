@@ -10,10 +10,10 @@ from sqlalchemy import func, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.core.errors import ConflictError, NotFoundError
+from app.core.errors import ConflictError, NotFoundError, UnprocessableError
 from app.models import (
     CounterStatus, EntryStatus, EventType, Queue, QueueEntry, QueueEvent, QueueStatus,
-    ServiceCounter, ServiceRecord, utcnow,
+    ServiceCounter, ServiceRecord, SlaPolicy, utcnow,
 )
 from app.schemas.counter import CounterCreate, CounterOut, CounterUpdate
 from app.schemas.entry import EntryOut, EntryPosition
@@ -170,11 +170,15 @@ class QueueService:
             queue = self._queue(queue_id)
             self.db.delete(queue)
 
-    def add_entry(self, queue_id: int) -> EntryOut:
+    def add_entry(self, queue_id: int, service_class: str | None = None) -> EntryOut:
         with self._tx():
             queue = self._queue(queue_id)
             if queue.status == QueueStatus.CLOSED.value:
                 raise ConflictError(f"Queue {queue_id} is closed", "queue_closed")
+            if service_class is not None and self.db.scalar(select(SlaPolicy.id).where(
+                    SlaPolicy.queue_id == queue_id, SlaPolicy.service_class == service_class)) is None:
+                raise UnprocessableError(
+                    f"Queue {queue_id} has no SLA policy for service class '{service_class}'", "unknown_service_class")
             self.db.execute(
                 update(Queue).where(Queue.id == queue_id)
                 .values(last_token=Queue.last_token + 1, updated_at=Queue.updated_at)
@@ -182,7 +186,8 @@ class QueueService:
             )
             token = self.db.execute(select(Queue.last_token).where(Queue.id == queue_id)).scalar_one()
             now = utcnow()
-            entry = QueueEntry(queue_id=queue_id, token_number=token, status=WAITING, arrival_time=now)
+            entry = QueueEntry(queue_id=queue_id, token_number=token, status=WAITING, arrival_time=now,
+                               service_class=service_class)
             self.db.add(entry)
             self.db.flush()
             position = self.db.execute(

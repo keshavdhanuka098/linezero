@@ -3,27 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>LineZero · Queue intelligence for service operations</title>
-<meta name="description" content="LineZero monitors service queues, forecasts congestion, simulates what-if scenarios with a digital twin and proposes interventions for people to approve.">
-<meta name="theme-color" content="#0a0c11">
-<style>
-html,body{margin:0;background:#0a0c11}
-#boot{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#0a0c11;transition:opacity .25s ease}
-#boot.done{opacity:0;pointer-events:none}
-#boot svg{width:64px;height:64px;overflow:visible}
-#boot path{stroke-dasharray:60;stroke-dashoffset:60;animation:bootdraw .8s cubic-bezier(.2,.7,.2,1) forwards}
-#boot path:nth-child(2){animation-delay:.08s}#boot path:nth-child(3){animation-delay:.16s}
-#boot ellipse{opacity:0;transform-origin:43px 32px;animation:bootring .6s .3s cubic-bezier(.2,.7,.2,1) forwards}
-#boot span{font:600 15px/1 Inter,system-ui,sans-serif;letter-spacing:-.01em;color:#8791a4;opacity:0;animation:bootfade .5s .45s forwards}
-@keyframes bootdraw{to{stroke-dashoffset:0}}
-@keyframes bootring{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
-@keyframes bootfade{to{opacity:1}}
-@media (prefers-reduced-motion:reduce){#boot *{animation-duration:.01ms!important;animation-delay:0s!important}}
-</style>
+<title>LineZero — Every Queue Has a Breaking Point.</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23080D18'/%3E%3Cpath d='M6 20h10c6 0 8 6 11 9M6 32h14M6 44h10c6 0 8-6 11-9' stroke='%2320D6C5' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='42' cy='32' r='12' stroke='%236B65FF' stroke-width='5' fill='none'/%3E%3C/svg%3E">
 </head>
 <body>
-<div id="boot" role="status" aria-label="Loading LineZero"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M4 18h12c7 0 9 7 12 11" stroke="#2ad4c3" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M4 32h18" stroke="#2ad4c3" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M4 46h12c7 0 9-7 12-11" stroke="#2ad4c3" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="43" cy="32" rx="12" ry="15" stroke="#6f69ff" stroke-width="5" fill="none"/></svg><span>LineZero</span></div>
 <div id="root"></div>
 <script type="module" src="/src/main.tsx"></script>
 </body>

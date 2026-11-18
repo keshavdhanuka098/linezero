@@ -16,6 +16,7 @@ from app.models.report import Report
 from app.models.risk_event import RiskEvent
 from app.models.service_record import ServiceRecord
 from app.models.simulation_run import SimulationRun
+from app.models.sla_policy import DEFAULT_CLASS, SlaPolicy
 
 __all__ = [
     "Base", "UTCDateTime", "utcnow", "Queue", "ServiceCounter", "QueueEntry", "QueueEvent",
@@ -23,5 +24,5 @@ __all__ = [
     "PredictionRecord", "BottleneckDetection", "OptimizationResult", "Report",
     "Severity", "BottleneckType", "ReportType",
     "CalibrationRecord", "CalibrationEvaluation", "RiskEvent", "InterventionHistory", "CalibrationStatus",
-    "CalibrationSource", "RiskCategory", "RiskStatus", "InterventionStatus", "OutcomeVerification",
+    "SlaPolicy", "DEFAULT_CLASS", "CalibrationSource", "RiskCategory", "RiskStatus", "InterventionStatus", "OutcomeVerification",
 ]

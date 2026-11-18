@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.enums import EntryStatus, QueueStatus
 from app.schemas.common import ErrorResponse
-from app.schemas.entry import AssignRequest, EntryOut, EntryPosition, ServeNextRequest
+from app.schemas.entry import AssignRequest, EntryCreate, EntryOut, EntryPosition, ServeNextRequest
 from app.schemas.queue import (
     CompleteResult, EventOut, QueueCreate, QueueDetail, QueueOut, QueueState, QueueUpdate, ServeResult,
 )
@@ -71,8 +71,8 @@ def queue_events(
 
 
 @router.post("/{queue_id}/entries", response_model=EntryOut, status_code=status.HTTP_201_CREATED, responses=ERR)
-def add_entry(queue_id: int, svc: QueueService = Depends(get_service)):
-    return svc.add_entry(queue_id)
+def add_entry(queue_id: int, payload: EntryCreate | None = None, svc: QueueService = Depends(get_service)):
+    return svc.add_entry(queue_id, payload.service_class if payload else None)
 
 
 @router.get("/{queue_id}/entries", response_model=list[EntryOut], responses=ERR)

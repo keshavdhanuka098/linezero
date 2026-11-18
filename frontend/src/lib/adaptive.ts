@@ -16,6 +16,7 @@ export const KIND: Record<DataKind, { label: string; tone: Tone }> = {
   simulated: { label: 'Simulated', tone: 'vio' },
   predicted: { label: 'Predicted', tone: 'warn' },
   explanation: { label: 'Explanation', tone: undefined },
+  configured: { label: 'Operator-set', tone: undefined },
 }
 /** Observed figures on a synthetic queue are synthetic, not real measurements. */
 export const observedKind = (p: Provenance | null | undefined): DataKind => (p?.is_synthetic ? 'synthetic' : 'observed')

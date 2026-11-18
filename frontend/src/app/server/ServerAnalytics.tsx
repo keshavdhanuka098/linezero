@@ -32,7 +32,7 @@ export default function ServerAnalytics() {
   return (
     <div className="page">
       <PageHeader title="Queue Analytics" sub="Computed by the LineZero API from recorded queue activity." demo={false}>
-        {data?.overview.meta.contains_synthetic_data && <Chip tone="demo">Synthetic data</Chip>}
+        {data?.overview.meta.contains_synthetic_data && <Chip tone="demo">SYNTHETIC DATA</Chip>}
       </PageHeader>
       {queueId === null ? <NoQueues /> : (<>
         <QueuePicker>

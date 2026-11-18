@@ -34,6 +34,8 @@ class QueueEntry(Base):
     service_start_time: Mapped[datetime | None] = mapped_column(UTCDateTime)
     service_end_time: Mapped[datetime | None] = mapped_column(UTCDateTime)
     is_synthetic: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default=false())
+    # LineZero SLA module: selects the customer's SLA target; NULL means the queue's 'standard' class
+    service_class: Mapped[str | None] = mapped_column(String(40))
 
     queue = relationship("Queue", back_populates="entries")
     counter = relationship("ServiceCounter", back_populates="entries")

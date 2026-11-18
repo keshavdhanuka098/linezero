@@ -37,7 +37,7 @@ The **Digital Twin** module (`/app/digital-twin`, tagline *Predict. Simulate. Op
 
 ---
 
-> **LineZero 2.0: Adaptive Intelligence** (*Predict. Understand. Intervene. Learn.*) adds a closed loop on top of the Digital Twin: a twin that calibrates itself from observed data (validated, versioned, reversible), explainable operational risk detection, simulated and costed intervention proposals that **people approve and carry out**, and outcome learning that keeps real, synthetic and operator-reported results apart. LineZero never executes an intervention. Methods, formulas, workflow and limitations: [docs/ADAPTIVE_INTELLIGENCE.md](docs/ADAPTIVE_INTELLIGENCE.md). New API: [docs/API_REFERENCE.md](docs/API_REFERENCE.md#adaptive-intelligence-linezero-20). New pages (server mode): Adaptive Intelligence, Operational Risk Radar, Autonomous Interventions, Outcome Learning.
+> **LineZero 2.0: Adaptive Intelligence** (*Predict. Understand. Intervene. Learn.*) adds a closed loop on top of the Digital Twin: a twin that calibrates itself from observed data (validated, versioned, reversible), explainable operational risk detection, simulated and costed intervention proposals that **people approve and carry out**, and outcome learning that keeps real, synthetic and operator-reported results apart. LineZero never executes an intervention. Methods, formulas, workflow and limitations: [docs/ADAPTIVE_INTELLIGENCE.md](docs/ADAPTIVE_INTELLIGENCE.md). New API: [docs/API_REFERENCE.md](docs/API_REFERENCE.md#adaptive-intelligence-linezero-20). New in this release: **SLA & Customer Experience Intelligence** ([docs/SLA_INTELLIGENCE.md](docs/SLA_INTELLIGENCE.md)), page "SLA Intelligence". New pages (server mode): Adaptive Intelligence, Operational Risk Radar, Autonomous Interventions, Outcome Learning.
 
 ## 1. Project overview
 
@@ -258,7 +258,7 @@ linezero/
 ├── shared/queueing_fixtures.json # M/M/c reference values asserted by both test suites
 ├── backend/
 │   ├── requirements.txt  pytest.ini  alembic.ini  .env.example
-│   ├── alembic/versions/         # 0001_initial_schema, 0002_intelligence_layer, 0003_adaptive_intelligence
+│   ├── alembic/versions/         # 0001_initial_schema, 0002_intelligence_layer, 0003_adaptive_intelligence, 0004_sla_intelligence
 │   ├── app/
 │   │   ├── main.py
 │   │   ├── api/routes/           # queues, counters, simulation, intelligence, twin
@@ -393,8 +393,8 @@ curl -s -X POST http://127.0.0.1:8000/api/v1/twin/simulate -H 'Content-Type: app
 ## 18. Database and migrations
 
 - SQLite by default (`backend/data/linezero.db`, git-ignored); the schema is PostgreSQL-compatible via `DATABASE_URL`.
-- Migrations live in `backend/alembic/versions`: `0001_initial_schema`, `0002_intelligence_layer` and `0003_adaptive_intelligence`. They are applied automatically at startup (`AUTO_MIGRATE=true`) or manually with `python -m app.core.init_db`.
-- **0003 (Adaptive Intelligence) adds four tables** (`calibration_records`, `calibration_evaluations`, `risk_events`, `intervention_history`) and alters nothing that exists. **The Digital Twin itself adds no tables.** It reads existing tables only; simulation results are returned to the client and are not stored. Saved comparison scenarios live in the browser's `localStorage`.
+- Migrations live in `backend/alembic/versions`: `0001_initial_schema`, `0002_intelligence_layer`, `0003_adaptive_intelligence` and `0004_sla_intelligence`. They are applied automatically at startup (`AUTO_MIGRATE=true`) or manually with `python -m app.core.init_db`.
+- **0003 (Adaptive Intelligence) adds four tables** (`calibration_records`, `calibration_evaluations`, `risk_events`, `intervention_history`) and alters nothing that exists. **0004 (SLA) adds the table `sla_policies` and one nullable column, `queue_entries.service_class`.** **The Digital Twin itself adds no tables.** It reads existing tables only; simulation results are returned to the client and are not stored. Saved comparison scenarios live in the browser's `localStorage`.
 - Synthetic data: `python -m app.seed.generate_demo_data --scenario all --customers 500 --seed 42 --reset` (run from `backend/`). All generated rows carry `is_synthetic = true`.
 
 ## 19. Testing

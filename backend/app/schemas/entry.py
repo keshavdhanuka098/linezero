@@ -22,6 +22,14 @@ class EntryOut(BaseModel):
         default=None, description="Time spent waiting (so far, if still waiting)"
     )
     is_synthetic: bool = False
+    service_class: str | None = Field(default=None, description="SLA service class; null = 'standard'")
+
+
+class EntryCreate(BaseModel):
+    """Optional body of POST /queues/{id}/entries (the endpoint still works with no body)."""
+    model_config = ConfigDict(extra="forbid")
+    service_class: str | None = Field(default=None, min_length=1, max_length=40, pattern=r"^[a-z0-9][a-z0-9_-]*$",
+                                      description="SLA service class; must have an SLA policy on this queue")
 
 
 class EntryPosition(BaseModel):

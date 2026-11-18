@@ -110,27 +110,29 @@ function FlowGraph({ findings, selected, onSelect, originId }: { findings: Findi
             })}
             <g onClick={() => onSelect(qf[0]?.id ?? null)} style={{ cursor: qf.length ? 'pointer' : 'default' }}>
               <rect x={qX - 52} y={y - 20} width={104} height={40} rx={10} fill="#0d1527" stroke={originId === q.id ? C.crit : hot(q.id) ? C.violet : qf.length ? C.amber : '#26365A'} strokeWidth={originId === q.id || hot(q.id) ? 2.5 : 1.5} filter={originId === q.id ? 'url(#glow)' : undefined} />
-              <text x={qX} y={y - 3} textAnchor="middle" fill="#E9F0FA" fontSize="11" fontWeight="600" fontFamily="Space Grotesk">{q.name.length > 15 ? q.name.slice(0, 14) + '…' : q.name}</text>
+              <text x={qX} y={y - 3} textAnchor="middle" fill="#E9F0FA" fontSize="11" fontWeight="600" fontFamily="Space Grotesk, Inter, sans-serif">{q.name.length > 15 ? q.name.slice(0, 14) + '…' : q.name}</text>
               <text x={qX} y={y + 12} textAnchor="middle" fill="#8997AD" fontSize="10">{lam.toFixed(2)}/min in</text>
             </g>
             {nodes.map(({ c, y: cy }) => {
               const isHot = c.status === 'active' && c.utilEma >= th.highUtil, low = c.status === 'active' && c.utilEma <= th.lowUtil, col = c.status === 'paused' ? '#3a4766' : isHot ? C.warn : low ? C.amber : C.teal
               const cf = findings.find(f => f.counterId === c.id), isOrigin = originId === c.id
+              const fullLabel = c.name.replace('Counter ', '').replace(/ \(.*\)/, '') + (c.status === 'paused' ? ' · paused' : '')
+              const shortLabel = fullLabel.length > 12 ? fullLabel.slice(0, 11) + '…' : fullLabel
               return (
                 <g key={c.id} onClick={() => onSelect(cf?.id ?? null)} style={{ cursor: cf ? 'pointer' : 'default' }}>
                   {isOrigin && <rect x={cX - 52} y={cy - 13} width={152} height={26} rx={8} fill="none" stroke={C.crit} strokeWidth={2} filter="url(#glow)"><animate attributeName="opacity" values="1;.35;1" dur="1.8s" repeatCount="indefinite" /></rect>}
                   <rect x={cX - 50} y={cy - 11} width={148} height={22} rx={7} fill="#0d1527" stroke={hot(c.id) ? C.violet : '#26365A'} strokeWidth={hot(c.id) ? 2.5 : 1} />
                   <rect x={cX - 50} y={cy - 11} width={Math.max(3, 148 * c.utilEma)} height={22} rx={7} fill={col} fillOpacity={0.28} />
-                  <text x={cX - 42} y={cy + 4} fill="#E9F0FA" fontSize="11" fontFamily="Space Grotesk">{c.name.replace('Counter ', '').replace(/ \(.*\)/, '')}{c.status === 'paused' ? ' · paused' : ''}</text>
-                  <text x={cX + 90} y={cy + 4} textAnchor="end" fill={isHot ? C.warn : '#8997AD'} fontSize="11" fontFamily="Space Grotesk">{pct(c.utilEma)} · {c.waiting.length}</text>
+                  <text x={cX - 42} y={cy + 4} fill="#E9F0FA" fontSize="11" fontFamily="Space Grotesk, Inter, sans-serif"><title>{fullLabel}</title>{shortLabel}</text>
+                  <text x={cX + 90} y={cy + 4} textAnchor="end" fill={isHot ? C.warn : '#8997AD'} fontSize="11" fontFamily="Space Grotesk, Inter, sans-serif">{pct(c.utilEma)} · {c.waiting.length}</text>
                 </g>
               )
             })}
           </g>)
         })}
-        <g><circle cx={aX} cy={midY} r={36} fill="#0d1527" stroke={C.teal} strokeWidth={1.5} /><text x={aX} y={midY - 2} textAnchor="middle" fill="#E9F0FA" fontSize="11" fontFamily="Space Grotesk" fontWeight="600">Incoming</text><text x={aX} y={midY + 12} textAnchor="middle" fill="#8997AD" fontSize="10">demand</text></g>
-        <text x={qX} y={14} textAnchor="middle" fill="#6a7487" fontSize="11">Queues</text>
-        <text x={cX + 24} y={14} textAnchor="middle" fill="#6a7487" fontSize="11">Counters · utilization · line</text>
+        <g><circle cx={aX} cy={midY} r={36} fill="#0d1527" stroke={C.teal} strokeWidth={1.5} /><text x={aX} y={midY - 2} textAnchor="middle" fill="#E9F0FA" fontSize="11" fontFamily="Space Grotesk, Inter, sans-serif" fontWeight="600">Incoming</text><text x={aX} y={midY + 12} textAnchor="middle" fill="#8997AD" fontSize="10">demand</text></g>
+        <text x={qX} y={14} textAnchor="middle" fill="#58698a" fontSize="10" letterSpacing="2">QUEUES</text>
+        <text x={cX + 24} y={14} textAnchor="middle" fill="#58698a" fontSize="10" letterSpacing="2">COUNTERS · UTIL · LINE</text>
       </svg>
     </div>
   )

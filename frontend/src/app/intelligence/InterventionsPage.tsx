@@ -94,7 +94,7 @@ function Panel({ queueId }: { queueId: number }) {
   return (
     <div className="iq-stack">
       <ProvenanceBanner p={res?.provenance ?? hist.data?.provenance} />
-      <div className="iq-banner real" role="note"><Chip tone="vio">Simulation only</Chip><span>LineZero proposes; people decide and act. Approving records your decision. It does not change any counter or queue, and an intervention counts as applied only when you confirm you carried it out.</span></div>
+      <div className="iq-banner real" role="note"><Chip tone="vio">SIMULATION ONLY</Chip><span>LineZero proposes; people decide and act. Approving records your decision. It does not change any counter or queue, and an intervention counts as applied only when you confirm you carried it out.</span></div>
 
       <Card title="Simulate recovery options" sub={riskId ? `Linked to risk event #${riskId}` : 'From the queue’s current state: customers waiting, counters open, service rates'} right={<KindTag kind="simulated" />}>
         <div className="iq-bar">

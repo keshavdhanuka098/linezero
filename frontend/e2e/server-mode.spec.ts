@@ -13,8 +13,8 @@ test.describe('with the backend running', () => {
 
   test('analytics loads from the API and labels synthetic data', async ({ page }) => {
     await page.goto('/app/analytics')
-    await expect(page.locator('.live-pill').first()).toContainText('Server API')
-    await expect(page.getByText('Synthetic data').first()).toBeVisible()
+    await expect(page.locator('.live-pill').first()).toContainText('SERVER API')
+    await expect(page.getByText('SYNTHETIC DATA').first()).toBeVisible()
     await expect(page.getByText('Utilization by counter')).toBeVisible()
   })
 
@@ -45,6 +45,6 @@ test('falls back to demo data when the API is unreachable', async ({ page }) => 
   await page.route('**/api/v1/**', r => r.abort())
   await page.addInitScript(() => localStorage.setItem('lz.source', 'server'))
   await page.goto('/app/analytics')
-  await expect(page.locator('.live-pill').first()).toContainText('API offline')
-  await expect(page.getByText('Demo data').first()).toBeVisible()
+  await expect(page.locator('.live-pill').first()).toContainText('API OFFLINE')
+  await expect(page.getByText('DEMO DATA').first()).toBeVisible()
 })

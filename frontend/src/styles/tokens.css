@@ -1,57 +1,12 @@
-/* LineZero design tokens — single source of truth for colour, type, space, radius, elevation, motion. */
-:root {
-  /* Surfaces (graphite, cool-neutral) */
-  --bg: #0a0c11;
-  --bg2: #10141c;
-  --panel: #11151d;
-  --panel2: #151a23;
-  --inset: #0d1118;
-  --hover: #1a202b;
-  --line: #222a37;
-  --line2: #2d3748;
-
-  /* Text */
-  --text: #e8ebf1;
-  --text-2: #b4bccb;
-  --muted: #8791a4;
-  --faint: #6a7487;
-
-  /* Brand + status. Violet = interactive/brand. Teal = healthy/live. Others are status only. */
-  --violet: #6f69ff;
-  --violet-hi: #837eff;
-  --teal: #2ad4c3;
-  --warn: #ff8a4c;
-  --amber: #f3b84b;
-  --crit: #ff6b82;
-  --ok: #2ad4c3;
-  --violet-soft: rgba(111, 105, 255, .14);
-  --teal-soft: rgba(42, 212, 195, .11);
-
-  /* Type */
-  --font-b: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-h: var(--font-b);
-  --fs-xs: 12px;
-  --fs-sm: 13px;
-  --fs-base: 14px;
-  --fs-md: 15px;
-  --fs-lg: 18px;
-  --fs-xl: 22px;
-  --fs-2xl: 28px;
-
-  /* Shape */
-  --r: 10px;
-  --r-sm: 7px;
-  --r-lg: 14px;
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, .35);
-  --shadow-pop: 0 12px 32px rgba(0, 0, 0, .5), 0 0 0 1px rgba(255, 255, 255, .02);
-
-  /* Layout */
-  --sidebar: 232px;
-  --sidebar-c: 64px;
-  --topbar: 56px;
-
-  /* Motion */
-  --ease: cubic-bezier(.2, .7, .2, 1);
-  --t-fast: .12s;
-  --t-med: .22s;
+:root{
+  --bg:#080D18;--bg2:#111C30;--violet:#6B65FF;--teal:#20D6C5;--text:#E9F0FA;--muted:#8997AD;
+  --panel:#0D1424;--panel2:#121B2F;--line:#1C2842;--line2:#26365A;
+  --warn:#FF7A45;--amber:#F5B84B;--crit:#FF5C7A;--ok:#20D6C5;
+  --violet-soft:rgba(107,101,255,.16);--teal-soft:rgba(32,214,197,.12);
+  --font-h:"Space Grotesk",Inter,system-ui,sans-serif;--font-b:Inter,system-ui,sans-serif;
+  --r:12px;--sidebar:244px;--sidebar-c:68px;--topbar:60px;
 }
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-kerning:normal;-webkit-text-size-adjust:100%}
+#root{min-height:100%}

@@ -1,9 +1,10 @@
-import { BarChart3, Brain, Cpu, Crosshair, ShieldAlert, Wand2, Gauge, GitFork, History, LayoutDashboard, Radio, Settings, SlidersHorizontal, type LucideIcon } from 'lucide-react'
+import { BarChart3, Timer, Brain, Cpu, Crosshair, ShieldAlert, Wand2, Gauge, GitFork, History, LayoutDashboard, Radio, Settings, SlidersHorizontal, type LucideIcon } from 'lucide-react'
 
 export interface RouteDef { path: string; title: string; short: string; icon: LucideIcon; group: 'Operate' | 'Analyze' | 'Optimize' | 'Intelligence' | 'System'; blurb: string }
 export const ROUTES: RouteDef[] = [
   { path: 'dashboard', title: 'Dashboard', short: 'Dashboard', icon: LayoutDashboard, group: 'Operate', blurb: 'Queue intelligence overview' },
   { path: 'monitor', title: 'Live Queue Monitor', short: 'Live Monitor', icon: Radio, group: 'Operate', blurb: 'Manage queues, counters and customers' },
+  { path: 'sla-intelligence', title: 'SLA Intelligence', short: 'SLA', icon: Timer, group: 'Operate', blurb: 'Breach prediction, customer risk and compliance' },
   { path: 'analytics', title: 'Queue Analytics', short: 'Analytics', icon: BarChart3, group: 'Analyze', blurb: 'Demand, waiting and service patterns' },
   { path: 'simulator', title: 'Queue Simulator', short: 'Simulator', icon: Gauge, group: 'Analyze', blurb: 'What-if queue simulation workspace' },
   { path: 'bottlenecks', title: 'Bottleneck Investigator', short: 'Bottlenecks', icon: GitFork, group: 'Analyze', blurb: 'Find where congestion originates' },

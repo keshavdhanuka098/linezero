@@ -42,7 +42,7 @@ tl.to({}, {duration:.2});
 }
 function exit(){
 if(exit.d)return;exit.d=1;
-var t=gsap.timeline({onComplete:function(){loader.style.display='none';window.ScrollTrigger&&ScrollTrigger.refresh();heroIn()}});
+var t=gsap.timeline({onComplete:function(){loader.style.display='none';window.ScrollTrigger&&ScrollTrigger.refresh();Promise.resolve(opts&&opts.intro).then(function(){if(!destroyed)heroIn()})}});
 t.to(loader,{opacity:0,duration:RM?.2:.6,ease:'power2.inOut'});
 }
 function heroIn(){

@@ -267,3 +267,7 @@ All routes are under `/api/v1`. Errors use the common envelope `{"error": {"code
 | POST | `/{queue_id}/cycle` | Runs only the automatic stages (recalibrate, scan risks, simulate interventions). Never approves or applies. |
 
 Existing `GET /twin/live/{queue_id}` additionally returns `active_calibration` (additive; nothing else changed).
+
+## SLA intelligence (`/sla`)
+
+See [SLA_INTELLIGENCE.md](SLA_INTELLIGENCE.md) for the endpoint table, formulas and error codes. Also: `POST /queues/{id}/entries` accepts an optional `{"service_class": "priority"}` body.

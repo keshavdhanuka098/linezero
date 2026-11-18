@@ -12,7 +12,7 @@ for (const p of pages) {
     page.on('pageerror', e => errors.push(e.message))
     await page.goto(`/app/${p}`)
     await expect(page.locator('h1').first()).toBeVisible()
-    await expect(page.locator('.live-pill').first()).toContainText('Browser demo')
+    await expect(page.locator('.live-pill').first()).toContainText('BROWSER DEMO')
     expect(errors).toEqual([])
   })
 }
